@@ -2,7 +2,7 @@
 
 $tds = [
     1 => ["multiplications"],
-    2 => ["test", "t2"]
+    2 => ["calculatrice", "calendrier"]
 ]
 
 ?>
