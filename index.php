@@ -2,7 +2,8 @@
 
 $tds = [
     1 => ["multiplications"],
-    2 => ["calculatrice", "calendrier"]
+    2 => ["calculatrice", "calendrier"],
+    3 => ["base_shows"]
 ]
 
 ?>
