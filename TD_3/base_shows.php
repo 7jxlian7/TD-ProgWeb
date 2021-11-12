@@ -18,9 +18,24 @@ class Series{
     }
 }
 
-$req = $db->query("SELECT * FROM series");
-$req->setFetchMode(PDO::FETCH_CLASS, Series::class);
-$series = $req->fetchAll();
+if(isset($_GET['page'])){
+    $pageId = $_GET['page'];
+    $limit1 = 15*($pageId-1);
+    $req = $db->query("SELECT * FROM series LIMIT $limit1, 15");
+    $req->setFetchMode(PDO::FETCH_CLASS, Series::class);
+    $series = $req->fetchAll();
+} else {
+    $req = $db->query("SELECT * FROM series");
+    $req->setFetchMode(PDO::FETCH_CLASS, Series::class);
+    $series = $req->fetchAll();
+}
+
+if(isset($_POST['initiale'])){
+    $req = $db->prepare("SELECT * FROM series WHERE title LIKE ?");
+    $results = $req->execute(array($_POST['initiale'] . "%"));
+    $req->setFetchMode(PDO::FETCH_CLASS, Series::class);
+    $series = $req->fetchAll();
+}
 
 /*
 $premiereLettre = "L";
@@ -42,6 +57,11 @@ while($liste_series = $req->fetch()){ ?>
 </head>
 <body style="font-family: Arial, Helvetica, sans-serif; font-size: 12px;">
     <h2>Liste de toutes les séries de la base de données</h2>
+    <form method="POST" action="base_shows.php">
+        <input type="text" placeholder="Initiale de la série..." name="initiale">
+        <input type="submit" name="submit">
+    </form>
+    <br>
     <div style="display: flex; flex-wrap: wrap; justify-content: space-around;">
     <?php
         foreach($series as $s){ ?>
@@ -58,9 +78,8 @@ while($liste_series = $req->fetch()){ ?>
             <br>
     <?php } ?>
     </div>
-    <form method="POST" action="form_traitement.php">
-        <input type="text" placeholder="Initiale de la série..." name="initiale">
-        <input type="submit" name="submit">
-    </form>
+    <a id="pagination" style="font-size: 16px; text-decoration: none; color:black;" href="base_shows.php?page=<?= $_GET['page']-1 ?>#pagination">&#129044;</a>
+    <span>Page <?= $_GET['page'] ?></span>
+    <a style="font-size: 16px; text-decoration: none; color:black;" href="base_shows.php?page=<?= $_GET['page']+1 ?>#pagination">&#129046;</a>
 </body>
 </html>
