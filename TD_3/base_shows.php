@@ -9,6 +9,10 @@ class Series{
         return $this->title." (".$this->year_start." &rarr; ".$end.")";
     }
 
+    public function getYoutubeUrl() {
+        return explode("v=", $this->youtube_trailer)[1];
+    }
+
     public function youtubeTrailerEmbed() {
         echo '<iframe width="560" height="315" src="https://www.youtube.com/embed/'. explode("v=", $this->youtube_trailer)[1] .'" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>';
     }
@@ -36,21 +40,24 @@ while($liste_series = $req->fetch()){ ?>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Base Shows</title>
 </head>
-<body>
-    
+<body style="font-family: Arial, Helvetica, sans-serif; font-size: 12px;">
+    <h2>Liste de toutes les séries de la base de données</h2>
+    <div style="display: flex; flex-wrap: wrap; justify-content: space-around;">
     <?php
         foreach($series as $s){ ?>
-           <div style="display: flex; justify-content: space-between; border: 2px solid black; border-radius: 5px; background-color: lightgray; padding: 5px;">
+           <div style="width:200px; display:flex; justify-content: space-between; border: 2px solid black; border-radius: 5px; background-color: #b8e994; padding: 5px;">
            <div>     
-                <h3><?php echo $s->title . " (" . $s->id . ")"; ?></h3>
+                <h3><a style="text-decoration: none; color: black;" href="liste_saisons.php?id=<?= $s->id ?>"><?php echo $s->title . " (" . $s->id . ")"; ?></a></h3>
                 <p><?php
                  $end = $s->year_end ?? '?';
                  echo $s->year_start . " - " . $end?></p>
-                </div>
-                <img style="height: 200px;" src="poster.php?id=<?= $s->id ?>" alt="<?= $s->title ?>">
+                 <a style="color: black;" href="https://www.youtube.com/watch?v=<?= $s->getYoutubeUrl() ?>" alt="<?= $s->title ?>">Voir le trailer</a>
+            </div>
+                <img style="height: 100px;" src="poster.php?id=<?= $s->id ?>" alt="<?= $s->title ?>">
             </div>
             <br>
     <?php } ?>
+    </div>
     <form method="POST" action="form_traitement.php">
         <input type="text" placeholder="Initiale de la série..." name="initiale">
         <input type="submit" name="submit">
