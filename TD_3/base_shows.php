@@ -21,11 +21,11 @@ class Series{
 if(isset($_GET['page'])){
     $pageId = $_GET['page'];
     $limit1 = 15*($pageId-1);
-    $req = $db->query("SELECT * FROM series LIMIT $limit1, 15");
+    $req = $db->query("SELECT * FROM series ORDER BY title ASC LIMIT $limit1, 15");
     $req->setFetchMode(PDO::FETCH_CLASS, Series::class);
     $series = $req->fetchAll();
 } else {
-    $req = $db->query("SELECT * FROM series");
+    $req = $db->query("SELECT * FROM series ORDER BY title");
     $req->setFetchMode(PDO::FETCH_CLASS, Series::class);
     $series = $req->fetchAll();
 }
@@ -78,8 +78,8 @@ while($liste_series = $req->fetch()){ ?>
             <br>
     <?php } ?>
     </div>
-    <a id="pagination" style="font-size: 16px; text-decoration: none; color:black;" href="base_shows.php?page=<?= $_GET['page']-1 ?>#pagination">&#129044;</a>
-    <span>Page <?= $_GET['page'] ?></span>
-    <a style="font-size: 16px; text-decoration: none; color:black;" href="base_shows.php?page=<?= $_GET['page']+1 ?>#pagination">&#129046;</a>
+    <a id="pagination" style="font-size: 16px; text-decoration: none; color:black;" href="base_shows.php?page=<?php if(isset($_GET['page'])) echo $_GET['page']-1; else echo "0"; ?>#pagination">&#129044;</a>
+    <span>Page <?php if(isset($_GET['page'])) echo $_GET['page']; else echo "1"; ?></span>
+    <a style="font-size: 16px; text-decoration: none; color:black;" href="base_shows.php?page=<?php if(isset($_GET['page'])) echo $_GET['page']+1; else echo "2"; ?>#pagination">&#129046;</a>
 </body>
 </html>
