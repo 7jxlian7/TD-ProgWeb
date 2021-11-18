@@ -19,6 +19,14 @@ if(isset($_POST['submit'])){
         $password = sha1($_POST['password']);
         $country = $_POST['country'];
         $email = htmlspecialchars($_POST['email']);
+
+        if($country == "autrePays" && isset($_POST['otherCountry'])){
+            if(!empty($_POST['otherCountry'])){
+                $ins = $db->prepare('INSERT INTO country(name) VALUES(?)');
+                $ins->execute([$_POST['otherCountry']]);
+                $country = $db->lastInsertId();
+            }
+        }
         if(strlen($username) > 5){
             if(filter_var($email, FILTER_VALIDATE_EMAIL)){
                 $user_id = genererChaineAleatoire(30);
@@ -56,7 +64,9 @@ if(isset($_POST['submit'])){
             <option value="4">Canada</option>
             <option value="15">Italie</option>
             <option value="8">Espagne</option>
+            <option value="autrePays">Autre (spécifier)</option>
         </select>
+        <input type="text" placeholder="Autre..." name="otherCountry" />
         <input type="submit" name="submit" value="M'inscrire">
         <?php
             if(isset($err)){ ?>
