@@ -4,7 +4,8 @@ $tds = [
     1 => ["multiplications"],
     2 => ["calculatrice", "calendrier"],
     3 => ["base_shows"],
-    4 => ["utilisateurs"]
+    4 => ["utilisateurs"],
+    5 => ["cookies_sessions.php"]
 ]
 
 ?>
