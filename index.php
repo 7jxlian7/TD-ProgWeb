@@ -24,5 +24,7 @@ $tds = [
         <?php foreach($td as $t){ ?>
                 <p><?= $t ?> : <a href='/TD_<?= $k ?>/<?= $t ?>.php'>lien</a>
         <?php }} ?>
+        <h2>Site complet (résumé des TD)</h2>
+        <p>Site : <a href='/Site'>lien</a>
 </body>
 </html>
