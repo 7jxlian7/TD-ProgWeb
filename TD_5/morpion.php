@@ -1,41 +1,50 @@
 <?php
 
-$nb_vues = 'X';
-
 session_start();
 
-$j1 = 'O';
-$j2 = 'X';
 $turn = rand(0, 1);
 
 if(!isset($_SESSION['turn'])){
-    $_SESSION['turn'] = $turn == 0 ? $j1 : $j2;
+    $_SESSION['turn'] = $turn == 0 ? 'X' : 'O';
 }
 
-$morpion = [];
+if(!isset($_SESSION['win'])){
+    $_SESSION['win'] = false;
+}
 
-function remplirMorpion(){
+if(!isset($_SESSION['morpion'])){
+    initMorpion();
+}
+
+function initMorpion(){
+    $_SESSION['morpion'] = [];
+    $_SESSION['win'] = false;
     for($i = 0; $i < 3; $i++){
-        $morpion[$i] = [];
         for($j = 0; $j < 3; $j++){
-            $morpion[$i][$j] = 0;
+            if (!isset($_SESSION['morpion'][$i])) {
+                $_SESSION['morpion'][$i] = [];
+            }
+            $_SESSION['morpion'][$i][$j] = '0';
         }   
     }
-    return $morpion;
 }
 
 function afficherMorpion(){ ?>
 <table>
     <?php
-        $nb_case = 0;
         for($i = 0; $i < 3; $i++){
             for($j = 0; $j < 3; $j++){
-                $nb_case++;
                 if($j == 0){ ?>
                     <tr>
-                <?php } ?>
-                <td><a href="play.php?id=<?= $nb_case ?>">jouer</a></td>
-            <?php if($j == 2){ ?>
+                        <?php } ?>
+                        <?php
+                    if($_SESSION['morpion'][$i][$j] == '0'){ ?>
+                        <td><a href="play.php?id=<?= 3*$i + $j ?>">jouer</a></td>
+                  <?php  } else { ?>
+                    <td><?= $_SESSION['morpion'][$i][$j] ?></td>
+              <?php    }
+                if($j == 2){ ?>
+                    
                     </tr>
             <?php  }
             }
@@ -56,14 +65,6 @@ function genererChaineAleatoire($longueur = 10)
     }
     return $chaineAleatoire;
 }
-
-if(isset($_COOKIE['id'])){
-    $_SESSION['id'] = $_COOKIE['id'];
-    echo "identifiant de session :" . $_SESSION['id'];
-} else {
-    setcookie("id", genererChaineAleatoire(10));
-}
-
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -84,9 +85,14 @@ if(isset($_COOKIE['id'])){
         }
     </style>
     <?php 
-    $morpion = remplirMorpion();
-    echo $morpion[0][0];
-    afficherMorpion();
+        afficherMorpion();
+        if($_SESSION['win'] == true){ 
+            ?>
+            <p>Bravo, le joueur qui a gagné est le joueur <?= $_SESSION['turn'] ?></p>
+            <button onclick="window.location.reload();">Recommencer ?</button>
+        <?php 
+        initMorpion();
+        }
     ?>
 </body>
 </html>

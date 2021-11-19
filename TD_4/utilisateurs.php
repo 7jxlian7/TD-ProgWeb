@@ -2,6 +2,11 @@
 
 include('db.php');
 
+$country = [];
+
+$req = $db->query('SELECT * FROM country');
+$req->execute();
+
 // Code retrouvé sur internet
 function genererChaineAleatoire($longueur = 10)
 {
@@ -58,12 +63,10 @@ if(isset($_POST['submit'])){
         <input type="text" name="email" placeholder="Email...">
         <input type="password" name="password" placeholder="Mot de passe...">
         <select name="country">
-            <option selected value="5">France</option>
-            <option value="2">USA</option>
-            <option value="1">Japon</option>
-            <option value="4">Canada</option>
-            <option value="15">Italie</option>
-            <option value="8">Espagne</option>
+            <?php
+                while($c = $req->fetch()){ ?>
+                    <option value="<?= $c['id'] ?>"><?= $c['name'] ?></option>
+          <?php } ?>
             <option value="autrePays">Autre (spécifier)</option>
         </select>
         <input type="text" placeholder="Autre..." name="otherCountry" />
