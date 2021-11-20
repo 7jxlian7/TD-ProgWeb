@@ -11,11 +11,12 @@ if(isset($_POST['submit'])){
     if(isset($_POST['email']) && isset($_POST['password'])){
         $email = htmlspecialchars($_POST['email']);
         $password = sha1($_POST['password']);
-        $req = $db->prepare('SELECT user_id FROM user WHERE email = ? AND password = ?');
+        $req = $db->prepare('SELECT id, user_id FROM user WHERE email = ? AND password = ?');
         $req->execute([$email, $password]);
         if($req->rowCount() == 1){
             $u= $req->fetch();
             $_SESSION['user_id'] = $u['user_id'];
+            $_SESSION['id'] = $u['id'];
             header('Location: series_list.php');
         }
     }

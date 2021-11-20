@@ -1,6 +1,7 @@
 <?php
 
 session_start();
+
 include('inc/db.php');
 
 if(!isset($_SESSION['user_id'])){
@@ -16,6 +17,10 @@ if(isset($_GET['page'])){
 $req = $db->prepare('SELECT * FROM user WHERE user_id = ?');
 $req->execute([$_SESSION['user_id']]);
 $user = $req->fetch();
+
+$req_like = $db->prepare('SELECT series_id FROM user_series WHERE user_id = ?');
+$req_like->execute([$_SESSION['id']]);
+$likes = $req_like->fetchAll();
 
 class Series{
 
@@ -53,7 +58,7 @@ $series = $req_s->fetchAll();
     <link rel="stylesheet" href="css/main.css">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title><?= $nomSite ?></title>
-    
+    <link rel="stylesheet" href="font-awesome/css/font-awesome.min.css">
 </head>
 <body>
     <?php include('inc/header.php') ?>
@@ -67,7 +72,7 @@ $series = $req_s->fetchAll();
     <?php    }
         }
         foreach($series as $s){ ?>
-            <div class="serie">
+            <div class="serie" id="<?= $s->id ?>">
                 <img src="poster.php?id=<?= $s->id ?>" alt="<?= $s->title ?>">
                 <div class="info-serie">
                     <h3><a href="liste_saisons.php?id=<?= $s->id ?>"><?php echo $s->title . " (" . $s->id . ")"; ?></a></h3>
@@ -76,7 +81,13 @@ $series = $req_s->fetchAll();
                     echo $s->year_start . " - " . $end?></p>
                     <a href="https://www.youtube.com/watch?v=<?= $s->getYoutubeUrl() ?>" alt="<?= $s->title ?>">Voir le trailer</a>
                     <br>
-                    <a style="font-size: 16px;" href="like.php?id=<?= $s->id ?>">&#x2661;</a>
+                    <a href="inc/like.php?id=<?= $s->id ?>#<?= $s->id ?>"><i class="fa fa-heart <?php
+                        foreach($likes as $liked_serie){
+                            if($liked_serie['series_id'] == $s->id){
+                                echo "liked";
+                            }
+                        }
+                    ?>"></i></a>
                 </div>
             </div>
         <?php } ?>
