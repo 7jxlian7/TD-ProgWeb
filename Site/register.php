@@ -19,7 +19,7 @@ function genererChaineAleatoire($longueur = 10)
     return $string;
 }
 
-$req = $db->query('SELECT * FROM country');
+$req = $db->query('SELECT * FROM country ORDER BY name ASC');
 $req->execute();
 
 if(isset($_POST['submit'])){
@@ -38,10 +38,14 @@ if(isset($_POST['submit'])){
         }
         if(strlen($username) > 5){
             if(filter_var($email, FILTER_VALIDATE_EMAIL)){
-                $user_id = genererChaineAleatoire(30);
-                $ins = $db->prepare('INSERT INTO user(name, email, password, register_date, admin, country_id, user_id) VALUES(?,?,?,?,?,?,?)');
-                $ins->execute(array($username, $email, $password, date('Y-m-d G-i-s'), 0, $country, $user_id));
-                $success = "Votre compte a bien été créé. Vous pouvez vous connecter <a href='login.php'>ici</a>.";
+                if($country != "unselected"){
+                    $user_id = genererChaineAleatoire(30);
+                    $ins = $db->prepare('INSERT INTO user(name, email, password, register_date, admin, country_id, user_id) VALUES(?,?,?,?,?,?,?)');
+                    $ins->execute(array($username, $email, $password, date('Y-m-d G-i-s'), 0, $country, $user_id));
+                    $success = "Votre compte a bien été créé. Vous pouvez vous connecter <a href='login.php'>ici</a>.";
+                } else {
+                    $err = "Veuillez choisir un pays.";
+                }
             } else {
                 $err = "Votre email est invalide.";
             }
@@ -71,6 +75,7 @@ if(isset($_POST['submit'])){
         <input type="text" name="email" placeholder="Email..."><br>
         <input type="password" name="password" placeholder="Mot de passe..."><br>
         <select name="country">
+        <option selected value="unselected">Veuillez choisir un pays...</option>
         <?php
             while($c = $req->fetch()){ ?>
                 <option value="<?= $c['id'] ?>"><?= $c['name'] ?></option>

@@ -35,6 +35,7 @@ header h3{
 
 main{
     padding: 25px;
+    text-align: center;
 }
 
 form *{
@@ -89,4 +90,51 @@ form *{
 .liked{
     color: #e73a3a;
     transition: color 0.2s;
+}
+
+.recherche-serie{
+    display: flex;
+    justify-content: center;
+    gap: 0;
+}
+
+.recherche-serie input[type=text], .recherche-serie button{
+    outline: none;
+    border: none;
+    padding: 5px;
+    margin: 0;
+    background: #252627;
+    color: white;
+    transition: all ease 0.2s;
+    font-weight: 600;
+}
+
+.recherche-serie button i{
+    color: white;
+    transition: inherit;
+}
+
+.recherche-serie button:hover{
+    transition: all ease 0.2s;
+    color: #252627;
+    background: white;
+    cursor: pointer;
+}
+
+.recherche-serie button:hover i{
+    transition: all ease 0.2s;
+    color: #252627;
+}
+
+.recherche-serie .likees {
+    margin-left: 50px;
+    margin: auto 5px auto 30px;
+}
+
+.recherche-serie .likees:hover {
+    cursor: pointer;
+}
+
+.recherche-serie label{
+    margin: auto 0 auto 0;
 }
