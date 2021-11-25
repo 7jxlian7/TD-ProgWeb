@@ -23,6 +23,18 @@ function checkWin(){
     return false;
 }
 
+function checkDraw(){
+    $isDraw = true;
+    for($i = 0; $i <= 2; $i++){
+        for($j = 0; $j <= 2; $j++){
+            if($_SESSION['morpion'][$i][$j] == '0'){
+                $isDraw = false;
+            }
+        }
+    }
+    return $isDraw;
+}
+
 if(isset($_SESSION['turn']) && isset($_GET['id'])){
     $idCase = $_GET['id'];
     $turn = $_SESSION['turn'];
@@ -32,8 +44,9 @@ if(isset($_SESSION['turn']) && isset($_GET['id'])){
         if($_SESSION['morpion'][$x][$y] == '0'){
             $_SESSION['morpion'][$x][$y] = $_SESSION['turn'];
             if(checkWin()){
-                echo "hello";
                 $_SESSION['win'] = true;
+            } else if(checkDraw()){ 
+                $_SESSION['draw'] = true;
             } else {
                 $_SESSION['turn'] = $_SESSION['turn'] == 'X' ? 'O' : 'X';
             }

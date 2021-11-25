@@ -12,6 +12,10 @@ if(!isset($_SESSION['win'])){
     $_SESSION['win'] = false;
 }
 
+if(!isset($_SESSION['draw'])){
+    $_SESSION['draw'] = false;
+}
+
 if(!isset($_SESSION['morpion'])){
     initMorpion();
 }
@@ -19,6 +23,7 @@ if(!isset($_SESSION['morpion'])){
 function initMorpion(){
     $_SESSION['morpion'] = [];
     $_SESSION['win'] = false;
+    $_SESSION['draw'] = false;
     for($i = 0; $i < 3; $i++){
         for($j = 0; $j < 3; $j++){
             if (!isset($_SESSION['morpion'][$i])) {
@@ -91,8 +96,10 @@ function genererChaineAleatoire($longueur = 10)
             <p>Bravo, le joueur qui a gagné est le joueur <?= $_SESSION['turn'] ?></p>
             <button onclick="window.location.reload();">Recommencer ?</button>
         <?php 
-        initMorpion();
-        }
-    ?>
+        initMorpion();    
+        } else if ($_SESSION['draw'] == true){ ?>
+            <p>Ooooh... Égalité... On rejoue !</p>
+            <button onclick="window.location.reload();">Recommencer ?</button>
+        <?php initMorpion(); } ?>
 </body>
 </html>
