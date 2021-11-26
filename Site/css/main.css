@@ -92,6 +92,11 @@ form *{
     transition: color 0.2s;
 }
 
+.liked:hover{
+    color: #7c1717;
+    transition: color 0.2s;
+}
+
 .recherche-serie{
     display: flex;
     justify-content: center;
