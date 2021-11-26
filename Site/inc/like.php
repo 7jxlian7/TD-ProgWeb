@@ -18,12 +18,13 @@ if(isset($_GET['id']) && isset($_SESSION['id'])){
         if(!$isLiked){
             $req1 = $db->prepare('INSERT INTO user_series(user_id, series_id) VALUES (?,?)');
             $req1->execute([$_SESSION['id'], $serieId]);
+            echo '1';
         } else {
             $req = $db->prepare('DELETE FROM user_series WHERE user_id = ? AND series_id = ?');
             $req->execute([$_SESSION['id'], $serieId]);
+            echo '0';
         }
     }
-    header('Location: ' . $_SERVER['HTTP_REFERER']);
 } else {
     header('Location: ../index.php');
 }

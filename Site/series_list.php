@@ -48,20 +48,37 @@ if (isset($_GET['page'])) {
     $pageId = 1;
 }
 
-if (isset($_GET['search'])) {
-    $limit1 = 15 * ($pageId - 1);
-    $req_s = $db->prepare("SELECT * FROM series WHERE title LIKE ? ORDER BY title ASC LIMIT $limit1, 15");
-    $req_s->execute(["%" . $_GET['search'] . "%"]);
-    $req_s->setFetchMode(PDO::FETCH_CLASS, Series::class);
-    $series = $req_s->fetchAll();
-    $count_series = $req_s->rowCount();
-} else {
-    $limit1 = 15 * ($pageId - 1);
-    $req_s = $db->query("SELECT * FROM series ORDER BY title ASC LIMIT $limit1, 15");
-    $req_s->setFetchMode(PDO::FETCH_CLASS, Series::class);
-    $series = $req_s->fetchAll();
-    $count_series = $req_s->rowCount();
+$req_sql = "SELECT * FROM series";
+$params = [];
+
+if(isset($_GET['likees']) && !empty($_GET['likees'])){
+    $params['user_id'] = $_SESSION['id'];
+    $req_sql .= " INNER JOIN user_series ON (series.id = user_series.series_id AND user_series.user_id = :user_id)";
 }
+
+if(isset($_GET['search']) && !empty($_GET['search'])){
+    $params['title'] = '%' . $_GET['search'] . '%';
+    $req_sql .= " WHERE series.title LIKE :title";
+}
+
+$limit = 15 * ($pageId - 1);
+
+// Requete pour le nombre de pages totales
+$req = $db->prepare($req_sql);
+$req->execute($params);
+
+$series_number = $req->rowCount();
+$pages_number = $series_number / 15;
+
+$req_sql .= " ORDER BY title ASC 
+                        LIMIT " . intval($limit) . " , 15";
+
+// Requete pour récupérer les séries
+$req = $db->prepare($req_sql);
+$req->execute($params);                      
+$req->setFetchMode(PDO::FETCH_CLASS, Series::class);
+$series = $req->fetchAll();
+
 
 ?>
 <!DOCTYPE html>
@@ -74,6 +91,7 @@ if (isset($_GET['search'])) {
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title><?= $nomSite ?> - Liste des séries</title>
     <link rel="stylesheet" href="font-awesome/css/font-awesome.min.css">
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js" integrity="sha256-/xUj+3OJU5yExlq6GSYGSHk7tPXikynS7ogEvDej/m4=" crossorigin="anonymous"></script>
 </head>
 
 <body>
@@ -84,7 +102,7 @@ if (isset($_GET['search'])) {
         <form class="recherche-serie" method="GET">
             <input type="text" name="search" placeholder="Ex: My Hero Academia">
             <button type="submit"><i class="fa fa-search"></i></button>
-            <input type="checkbox" class="likees" name="likees" id="likees" onclick="chargerFiltre()">
+            <input type="checkbox" class="likees" name="likees" <?php if(isset($_GET['likees'])) echo "checked"; ?>>
             <label for="likees">Séries suivies</label>
         </form>
         <div class="series-content">
@@ -92,7 +110,7 @@ if (isset($_GET['search'])) {
             if (isset($req_s)) {
                 if ($req_s->rowCount() == 0) { ?>
                     <p>Il n'y a rien à afficher ici...</p>
-                <?php    }
+        <?php  }
             }
             foreach ($series as $s) { ?>
                 <div class="serie" id="<?= $s->id ?>">
@@ -104,36 +122,45 @@ if (isset($_GET['search'])) {
                             echo $s->year_start . " - " . $end ?></p>
                         <a href="https://www.youtube.com/watch?v=<?= $s->getYoutubeUrl() ?>" alt="<?= $s->title ?>">Voir le trailer</a>
                         <br>
-                        <a href="inc/like.php?id=<?= $s->id ?>#<?= $s->id ?>">
-                            <i class="fa fa-heart 
+                        <!-- href="inc/like.php?id=<?= $s->id ?>#<?= $s->id ?>" -->
+                        <a class="bouton_like" data-id="<?= $s->id ?>">
+                            <i class="fa fa-heart
                         <?php
                             foreach ($likes as $liked_serie) {
                                 if ($liked_serie['series_id'] == $s->id) {
                                     echo "liked";
                                 }
-                            } ?>"></i>
+                            } ?>" data-heart-id="<?= $s->id ?>"></i>
                         </a>
                     </div>
                 </div>
             <?php } ?>
         </div>
         <div style="text-align: center; margin-top: 25px;">
+        <?php if($pageId > 1) { ?>
             <a id="pagination" href="series_list.php?page=<?php if (isset($_GET['page'])) echo $_GET['page'] - 1;
-                                                            else echo "1"; ?><?php if (isset($_GET['search'])) { echo "&search=" . $_GET['search']; } ?>#pagination">&#129044;</a>
+                                                            else echo "1"; ?><?php if (isset($_GET['search'])) { echo "&search=" . $_GET['search']; } if (isset($_GET['likees'])) { echo "&likees=on"; }  ?>#pagination">&#129044;</a>
+        <?php } ?>
             <span>Page <?php if (isset($_GET['page'])) echo $_GET['page']; else echo "1"; ?></span>
-            <a href="series_list.php?page=<?php if (isset($_GET['page'])) echo $_GET['page'] + 1; else echo "2"; ?><?php if (isset($_GET['search'])) {echo "&search=" . $_GET['search'];} ?>#pagination">&#129046;</a>
+            <?php if($pageId <= $pages_number) { ?>
+            <a href="series_list.php?page=<?php if (isset($_GET['page'])) echo $_GET['page'] + 1; else echo "2"; ?><?php if (isset($_GET['search'])) {echo "&search=" . $_GET['search'];} if (isset($_GET['likees'])) { echo "&likees=on"; } ?>#pagination">&#129046;</a>
+            <?php } ?>
         </div>
     </main>
+    <script type="text/javascript">
+        $(document).ready(function () {
+            $('.bouton_like').click(function () {
+                let serie_id = $(this).attr('data-id');
+                $.get("inc/like.php?id="+serie_id, function(data){
+                    let coeurSerie = $("[data-heart-id='" + serie_id + "']");
+                    if(data == "0"){
+                        coeurSerie.removeClass('liked');
+                    } else {
+                        coeurSerie.addClass('liked');
+                    }
+                })
+            });
+        });
+    </script>
 </body>
 </html>
-<script>
-    function chargerFiltre(){
-        let filtre = document.getElementById('likees');
-        if(filtre.checked){
-            filtre.removeAttribute('checked');
-        } else {
-            filtre.setAttribute('checked');
-        }
-    }
-    
-</script>
