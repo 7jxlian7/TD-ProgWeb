@@ -16,7 +16,6 @@ a{
 header{
     display: flex;
     justify-content: space-between;
-    padding: 20px 25px;
     border-bottom: 2px solid white;
 }
 
@@ -31,6 +30,7 @@ header ul{
 
 header h3{
     margin: 0;
+    padding: 20px 25px;
 }
 
 main{
@@ -142,4 +142,22 @@ form *{
 
 .recherche-serie label{
     margin: auto 0 auto 0;
+}
+
+.menu a{
+    display: flex;
+    align-items: center;
+    padding: 20px 25px;
+    font-weight: 600;
+}
+
+.menu a:hover{
+    cursor: pointer;
+    background-color: white;
+    color:#2f3542;
+    transition: all 0.3s ease;
+}
+
+.bold{
+    font-weight: bold;
 }

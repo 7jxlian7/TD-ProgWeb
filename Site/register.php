@@ -42,7 +42,7 @@ if(isset($_POST['submit'])){
                     $user_id = genererChaineAleatoire(30);
                     $ins = $db->prepare('INSERT INTO user(name, email, password, register_date, admin, country_id, user_id) VALUES(?,?,?,?,?,?,?)');
                     $ins->execute(array($username, $email, $password, date('Y-m-d G-i-s'), 0, $country, $user_id));
-                    $success = "Votre compte a bien été créé. Vous pouvez vous connecter <a href='login.php'>ici</a>.";
+                    $success = "Votre compte a bien été créé.<p><a href='login.php'>Me connecter</a></p>";
                 } else {
                     $err = "Veuillez choisir un pays.";
                 }

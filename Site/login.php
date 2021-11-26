@@ -17,7 +17,11 @@ if(isset($_POST['submit'])){
             $u= $req->fetch();
             $_SESSION['user_id'] = $u['user_id'];
             $_SESSION['id'] = $u['id'];
-            header('Location: series_list.php');
+            if(isset($_SESSION['pagePrec'])){
+                header('Location: ' . $_SESSION['pagePrec']);
+            } else {
+                header('Location: index.php');
+            }
         }
     }
 }

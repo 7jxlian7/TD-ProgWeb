@@ -1,14 +1,14 @@
 <header>
-    <h3><?= $nomSite ?></h3>
-    <ul>
-        <li><a href="index.php">Accueil</a></li>
+    <h3><a href="index.php"><?= $nomSite ?></a></h3>
+    <ul class="menu">
+    <a href="index.php"><li>Accueil</li></a>
         <?php
             if(!empty($_SESSION['user_id'])){ ?>
-        <li><a href="series_list.php">Liste des séries</a></li>
-        <li><a href="logout.php">Déconnexion</a></li>
+        <a href="series_list.php"><li>Liste des séries</li></a>
+        <a href="logout.php"><li>Déconnexion</li></a>
     <?php } else { ?>
-        <li><a href="register.php">Inscription</a></li>
-        <li><a href="login.php">Connexion</a></li>
+        <a href="register.php"><li>Inscription</li></a>
+        <a href="login.php"><li>Connexion</li></a>
     <?php  } ?>
     </ul>
 </header>

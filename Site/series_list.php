@@ -3,10 +3,7 @@
 session_start();
 
 include('inc/db.php');
-
-if (!isset($_SESSION['user_id'])) {
-    header('Location: login.php');
-}
+require_once('inc/pageProtegee.php');
 
 if (isset($_GET['page'])) {
     if ($_GET['page'] < 1 || $_GET['page'] == NULL) {
